@@ -86,7 +86,7 @@ class UserService
 
             DB::commit();
 
-            return ['message' => 'Usuário deletado com sucesso!'];
+            return ['message' => 'foto do usuario deletado com sucesso!'];
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;
