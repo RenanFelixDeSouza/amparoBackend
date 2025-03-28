@@ -2,87 +2,51 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
-use DB;
+use App\Http\Resources\User\UserResource;
+use App\Services\User\UserService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
-use App\Models\User;
 
 class UserController extends Controller
 {
+    protected $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
+    public function getUser() {
+        $result = $this->userService->getUser();
+        return response()->json([
+            'user' => new UserResource($result['user']),
+        ]);
+    }
     public function uploadPhoto(Request $request)
     {
-
-        $request->validate([
-            'photo' => 'required|image|mimes:png|max:2048',
-        ]);
-
-        $user = auth()->user();
-
-        // Remove a foto antiga, se existir
-        if ($user->photo) {
-            Storage::disk('public')->delete($user->photo);
-        }
-
-        // Gera um nome amigável para a foto
-        $timestamp = now()->format('YmdHis');
-        $fileName = str_replace(' ', '_', strtolower($user->name)) . "_{$timestamp}.png";
-
-        // Salva a nova foto no diretório 'public/uploads/users'
-        $path = $request->file('photo')->storeAs('uploads/users', $fileName, 'public');
-        $user->photo = $path;
-        $user->save();
+        $result = $this->userService->uploadPhoto($request);
 
         return response()->json([
-            'message' => 'Foto enviada com sucesso!',
-            'photo_url' => asset('storage/' . $path),
+            'message' => $result['message'],
+            'photo_url' => $result['photo_url'],
         ]);
     }
 
     public function update(Request $request)
     {
-        $user = auth()->user();
+        $result = $this->userService->update($request);
 
-        // Captura todos os dados enviados
-        $data = $request->all();
-
-        // Log para depuração
-        \Log::info('Dados recebidos para atualização:', $data);
-
-        // Validação dos campos
-        $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'email' => 'sometimes|email|max:255',
-            'phone' => 'sometimes|string|max:20',
-            'address' => 'sometimes|string|max:500',
+        return response()->json([
+            'message' => $result['message'],
+            'user' => new UserResource($result['user']),
         ]);
+    }
 
-        DB::beginTransaction();
+    public function delete()
+    {
+        $result = $this->userService->delete();
 
-        try {
-            // Atualiza os dados do usuário
-            $updated = $user->update(array_intersect_key($data, array_flip(['name', 'email', 'phone', 'address'])));
-
-            $user->save();
-
-
-            DB::commit();
-
-            if (!$updated) {
-                return response()->json([
-                    'message' => 'Nenhuma alteração foi feita nos dados do usuário.',
-                ], 200);
-            }
-
-            return response()->json([
-                'message' => 'Dados atualizados com sucesso!',
-                'photo_url' => $user->photo ? asset('storage/' . $user->photo) : null,
-            ]);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            \Log::error('Erro ao atualizar os dados do usuário:', ['error' => $e->getMessage()]);
-            return response()->json([
-                'message' => 'Erro ao atualizar os dados do usuário.',
-            ], 500);
-        }
+        return response()->json([
+            'message' => $result['message'],
+        ]);
     }
 }
