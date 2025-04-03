@@ -12,6 +12,10 @@ class SpecieService
     {
         $this->specieRepository = $specieRepository;
     }
+    public function createSpecie(array $data)
+{
+    return $this->specieRepository->create($data);
+}
 
     public function getAllSpecies(?string $search = '', int $limit = 5)
     {

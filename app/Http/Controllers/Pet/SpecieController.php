@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Pet;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Pet\StoreSpecieRequest;
 use App\Http\Resources\Pet\SpecieResource;
 use App\Services\Pet\SpecieService;
 use Illuminate\Http\Request;
@@ -16,6 +17,14 @@ class SpecieController extends Controller
         $this->specieService = $specieService;
     }
 
+    public function store(StoreSpecieRequest $request)
+    {
+        $validatedData = $request->validated();
+    
+        $specie = $this->specieService->createSpecie($validatedData);
+    
+        return new SpecieResource($specie);
+    }
     public function index(Request $request)
     {
         $search = $request->input('search', '');

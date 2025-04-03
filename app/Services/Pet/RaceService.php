@@ -13,6 +13,11 @@ class RaceService
         $this->raceRepository = $raceRepository;
     }
 
+    public function createRace(array $data)
+    {
+        return $this->raceRepository->create($data);
+    }
+
     public function getAllRaces(?string $search = '', int $limit = 5)
     {
         $search = $search ?? '';

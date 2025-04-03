@@ -27,7 +27,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('pets/create', [PetController::class, 'store']);
     Route::post('pets/{petId}/upload-photo', [PetController::class, 'uploadPhoto']);
     Route::get('/races/index', [RaceController::class, 'index']);
+    Route::post('/races/store', [RaceController::class, 'store']);
     Route::get('/species/index', [SpecieController::class, 'index']);
+    Route::post('/species/store', [SpecieController::class, 'store']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

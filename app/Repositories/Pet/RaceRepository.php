@@ -13,6 +13,12 @@ class RaceRepository
         $this->model = $model;
     }
 
+    public function create(array $data)
+    {
+        $data['created_by'] = auth()->user()->id;
+        return $this->model->create($data);
+    }
+
     public function getAll(string $search = '', int $limit = 5)
     {
         return $this->model->query()
