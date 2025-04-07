@@ -3,20 +3,28 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Http\Requests\Auth\AuthRequest;
 use App\Services\Auth\AuthService;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
     protected $authService;
+
+    /**
+     * Construtor do AuthController
+     * @param AuthService $authService
+     */
     public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
     }
 
+    /**
+     * Realiza o login do usuário
+     * @param AuthRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(AuthRequest $request)
     {
         try {
@@ -32,6 +40,11 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Registra um novo usuário
+     * @param AuthRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function register(AuthRequest $request)
     {
         try {
@@ -42,6 +55,10 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * Realiza o logout do usuário
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function logout()
     {
         try {

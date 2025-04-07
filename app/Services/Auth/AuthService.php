@@ -7,13 +7,8 @@ use DB;
 use Hash;
 use Illuminate\Support\Facades\Auth;
 
-/**
- * Serviço responsável pela autenticação e gerenciamento de sessão
- * @package App\Services\Auth
- */
 class AuthService
 {
-
     /**
      * Realiza login do usuário
      * @param array $request
@@ -21,7 +16,6 @@ class AuthService
      */
     public function login(array $request)
     {
-
         if (empty($request['email']) || empty($request['password'])) {
             return response()->json(['message' => 'Email and password are required'], 400);
         }
@@ -32,14 +26,7 @@ class AuthService
             return response()->json(['message' => 'User not found'], 404);
         }
 
-
-        \Log::info('Senha fornecida: ' . $request['password']);
-        \Log::info('Hash armazenado: ' . $user->password);
-
-        \Log::info('Hash armazenado no banco: ' . $user->password);
         if (!Hash::check($request['password'], $user->password)) {
-
-            \Log::error('Falha na verificação da senha. Senha fornecida: ' . $request['password']);
             return response()->json(['message' => 'Invalid password'], 401);
         }
 
@@ -54,11 +41,21 @@ class AuthService
         ];
     }
 
+    /**
+     * Realiza logout do usuário
+     * @param int $userId
+     */
     public function logout($userId)
     {
         Auth::user()->tokens()->delete();
     }
 
+    /**
+     * Registra um novo usuário
+     * @param array $data
+     * @return User
+     * @throws \Exception
+     */
     public function register(array $data)
     {
         try {
@@ -76,17 +73,15 @@ class AuthService
             $data['user_name'] = $data['name'];
 
             $hashedPassword = Hash::make($data['password']);
-            \Log::info('Hash gerado para a senha (antes de salvar): ' . $hashedPassword);
 
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
+                'phone' => $data['phone'],
                 'password' => $hashedPassword,
                 'type_user_id' => $data['type_user_id'],
                 'user_name' => $data['user_name'],
             ]);
-
-            \Log::info('Hash salvo no banco de dados: ' . $user->password);
 
             DB::commit();
 
@@ -97,5 +92,4 @@ class AuthService
             throw $e;
         }
     }
-
 }
