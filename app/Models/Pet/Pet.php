@@ -13,8 +13,9 @@ class Pet extends Model
     protected $fillable = [
         'name',
         'color',
+        'photo',
         'is_castrated',
-        'age',
+        'birth_date',
         'race_id',
         'specie_id',
     ];

@@ -24,8 +24,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/city', [CityController::class, 'getCities']);
 
     //pets
+    Route::get('/pets/index', [PetController::class, 'index']);
     Route::post('pets/create', [PetController::class, 'store']);
     Route::post('pets/{petId}/upload-photo', [PetController::class, 'uploadPhoto']);
+    Route::delete('pets/{petId}/delete-photo', [PetController::class, 'deletePhoto']);
     Route::get('/races/index', [RaceController::class, 'index']);
     Route::post('/races/store', [RaceController::class, 'store']);
     Route::get('/species/index', [SpecieController::class, 'index']);

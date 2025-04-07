@@ -12,7 +12,7 @@ class CreatePetsTable extends Migration
             $table->string('name', 45);
             $table->string('color', 45);
             $table->boolean('is_castrated');
-            $table->string('age', 45)->nullable();
+            $table->timestamp('birth_date')->nullable();
             $table->foreignId('race_id')->constrained('races')->onDelete('cascade');
             $table->foreignId('specie_id')->constrained('species')->onDelete('cascade');
             $table->timestamps();
