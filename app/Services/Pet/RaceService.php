@@ -18,10 +18,8 @@ class RaceService
         return $this->raceRepository->create($data);
     }
 
-    public function getAllRaces(?string $search = '', int $limit = 5)
+    public function getAllRaces(array $filters, array $pagination)
     {
-        $search = $search ?? '';
-
-        return $this->raceRepository->getAll($search, $limit);
+        return $this->raceRepository->getAll($filters, $pagination);
     }
 }

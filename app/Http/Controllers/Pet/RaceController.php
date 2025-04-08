@@ -28,10 +28,20 @@ class RaceController extends Controller
 
     public function index(Request $request)
     {
-        $search = $request->input('search', '');
-        $limit = $request->input('limit', 5);
+        $filters = [
+            'description' => $request->input('description', ''),
+            'search' => $request->input('search', ''),
+        ];
 
-        $races = $this->raceService->getAllRaces($search, $limit);
+        $pagination = [
+            'page' => $request->input('page', 1),
+            'limit' => $request->input('limit', 10),
+            'sort_column' => $request->input('sort_column', 'id'),
+            'sort_order' => $request->input('sort_order', 'asc'),
+        ];
+
+
+        $races = $this->raceService->getAllRaces($filters, $pagination);
 
         return RaceResource::collection($races);
     }

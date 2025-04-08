@@ -13,14 +13,12 @@ class SpecieService
         $this->specieRepository = $specieRepository;
     }
     public function createSpecie(array $data)
-{
-    return $this->specieRepository->create($data);
-}
-
-    public function getAllSpecies(?string $search = '', int $limit = 5)
     {
-        $search = $search ?? '';
+        return $this->specieRepository->create($data);
+    }
 
-        return $this->specieRepository->getAll($search, $limit);
+    public function getAllSpecies(array $filters, array $pagination)
+    {
+        return $this->specieRepository->getAll($filters, $pagination);
     }
 }

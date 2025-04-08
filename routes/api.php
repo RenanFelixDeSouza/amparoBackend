@@ -6,21 +6,23 @@ use App\Http\Controllers\Pet\PetController;
 use App\Http\Controllers\Pet\RaceController;
 use App\Http\Controllers\Pet\SpecieController;
 use App\Http\Controllers\User\UserController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
+//login
 Route::post('/login', [AuthController::class, 'login']);
+//register
 Route::post('/register', [AuthController::class, 'register']);
 
 // Rotas autenticadas
 Route::middleware('auth:sanctum')->group(function () {
+    //user
     Route::get('/user', [UserController::class, 'getUser']);
     Route::post('/user/upload-photo', [UserController::class, 'uploadPhoto'])->name('user.uploadPhoto');
     Route::put('/user/update', [UserController::class, 'update']);
     Route::delete('/user/delete-photo', [UserController::class, 'delete']);
 
-
+    //cities
     Route::get('/city', [CityController::class, 'getCities']);
 
     //pets
@@ -32,6 +34,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/races/store', [RaceController::class, 'store']);
     Route::get('/species/index', [SpecieController::class, 'index']);
     Route::post('/species/store', [SpecieController::class, 'store']);
+
+
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

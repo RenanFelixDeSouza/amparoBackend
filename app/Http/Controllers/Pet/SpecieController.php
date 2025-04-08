@@ -20,17 +20,26 @@ class SpecieController extends Controller
     public function store(StoreSpecieRequest $request)
     {
         $validatedData = $request->validated();
-    
+
         $specie = $this->specieService->createSpecie($validatedData);
-    
+
         return new SpecieResource($specie);
     }
     public function index(Request $request)
     {
-        $search = $request->input('search', '');
-        $limit = $request->input('limit', 5);
+        $filters = [
+            'search' => $request->input('search', ''),
+            'description' => $request->input('description', ''),
+        ];
 
-        $species = $this->specieService->getAllSpecies($search, $limit);
+        $pagination = [
+            'page' => $request->input('page', 1),
+            'limit' => $request->input('limit', 10),
+            'sort_column' => $request->input('sort_column', 'species.description'),
+            'sort_order' => $request->input('sort_order', 'asc'),
+        ];
+
+        $species = $this->specieService->getAllSpecies($filters, $pagination);
 
         return SpecieResource::collection($species);
     }
