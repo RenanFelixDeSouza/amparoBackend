@@ -6,6 +6,7 @@ use App\Http\Controllers\Pet\PetController;
 use App\Http\Controllers\Pet\RaceController;
 use App\Http\Controllers\Pet\SpecieController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\Company\CompanyController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
@@ -34,8 +35,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/races/store', [RaceController::class, 'store']);
     Route::get('/species/index', [SpecieController::class, 'index']);
     Route::post('/species/store', [SpecieController::class, 'store']);
-
-
+    
+    Route::get('/species/index', [SpecieController::class, 'index']);
+    
+    // Companies
+    Route::get('/companies/index', [CompanyController::class, 'index']);
+    Route::get('/companies/{cnpj}', [CompanyController::class, 'getCompanyByCnpj']);
+    Route::post('/companies/create', [CompanyController::class, 'store']);
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

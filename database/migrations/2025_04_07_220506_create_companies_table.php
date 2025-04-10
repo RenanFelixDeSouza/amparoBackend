@@ -19,7 +19,9 @@ class CreateCompaniesTable extends Migration
             $table->string('fantasy_name');
             $table->string('cnpj', 14)->unique();
             $table->string('ie')->nullable();
+            $table->string('ie_status');
             $table->string('im')->nullable();
+            $table->string('im_status');
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('responsible_name')->nullable();
