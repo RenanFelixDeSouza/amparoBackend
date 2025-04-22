@@ -18,6 +18,8 @@ class Pet extends Model
         'birth_date',
         'race_id',
         'specie_id',
+        'adoption_user_id',
+        'temporary_home_user_id'
     ];
 
     public function race()
@@ -33,13 +35,25 @@ class Pet extends Model
     public function users()
     {
         return $this->belongsToMany(User::class, 'pivot_pet_users')
-                    ->withPivot('action')
-                    ->withTimestamps();
+            ->withPivot('action')
+            ->withTimestamps();
     }
 
     public function diseases()
     {
         return $this->belongsToMany(Disease::class, 'pivot_pet_disease')
-                    ->withTimestamps();
+            ->withTimestamps();
+    }
+
+    // Relação com o usuário que adotou o pet
+    public function adoptionUser()
+    {
+        return $this->belongsTo(User::class, 'adoption_user_id');
+    }
+
+    // Relação com o usuário que é lar temporário do pet
+    public function temporaryHomeUser()
+    {
+        return $this->belongsTo(User::class, 'temporary_home_user_id');
     }
 }

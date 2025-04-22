@@ -19,6 +19,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware('auth:sanctum')->group(function () {
     //user
     Route::get('/user', [UserController::class, 'getUser']);
+    Route::get('/users/index', [UserController::class, 'getUsers']);
     Route::post('/user/upload-photo', [UserController::class, 'uploadPhoto'])->name('user.uploadPhoto');
     Route::put('/user/update', [UserController::class, 'update']);
     Route::delete('/user/delete-photo', [UserController::class, 'delete']);
@@ -31,6 +32,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('pets/create', [PetController::class, 'store']);
     Route::post('pets/{petId}/upload-photo', [PetController::class, 'uploadPhoto']);
     Route::delete('pets/{petId}/delete-photo', [PetController::class, 'deletePhoto']);
+    Route::post('pets/{petId}/adopt', [PetController::class, 'adopt']);
     Route::get('/races/index', [RaceController::class, 'index']);
     Route::post('/races/store', [RaceController::class, 'store']);
     Route::get('/species/index', [SpecieController::class, 'index']);

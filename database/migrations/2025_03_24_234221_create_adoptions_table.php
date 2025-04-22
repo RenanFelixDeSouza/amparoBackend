@@ -14,7 +14,7 @@ class CreateAdoptionsTable extends Migration
             $table->string('date', 45);
             $table->boolean('is_canceled')->default(false);
             $table->string('reason_canceled', 45)->nullable();
-            $table->string('adoptioncol', 45)->nullable();
+            $table->boolean('temporary')->nullable();
             $table->string('date_canceled', 45)->nullable();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('pet_id')->constrained('pets')->onDelete('cascade');
