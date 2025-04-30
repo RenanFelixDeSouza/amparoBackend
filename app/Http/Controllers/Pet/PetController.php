@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Pet;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Pet\StorePetRequest;
+use App\Http\Requests\Pet\UpdatePetRequest;
 use App\Http\Resources\Pet\PetResource;
 use App\Services\Pet\PetService;
 use DB;
@@ -49,6 +50,16 @@ class PetController extends Controller
         ], 201);
     }
 
+    public function update(UpdatePetRequest $request, $id)
+    {
+        $pet = $this->petService->updatePet($id, $request->all());
+
+        return response()->json([
+            'message' => 'Pet updated successfully',
+            'pet' => $pet
+        ]);
+    }
+
     public function uploadPhoto(Request $request, $petId)
     {
         $result = $this->petService->uploadPhoto($request, $petId);
@@ -68,8 +79,5 @@ class PetController extends Controller
         ]);
         
     }
-
-    
-
 
 }

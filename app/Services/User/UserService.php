@@ -4,6 +4,7 @@ namespace App\Services\User;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use DB;
 
 class UserService
@@ -21,7 +22,7 @@ class UserService
 
     public function getAllUsers(array $filters, array $pagination)
     {
-        $query = User::query();
+        $query = User::with('typeUser');
 
         if (!empty($filters['name'])) {
             $query->where('name', 'like', '%' . $filters['name'] . '%');
@@ -118,4 +119,24 @@ class UserService
         }
     }
 
+    public function changePassword($data)
+    {
+        $user = auth()->user();
+
+        DB::beginTransaction();
+        try {
+            if (!Hash::check($data['admin_password'], $user->password)) {
+                throw new \Exception('A senha atual está incorreta');
+            }
+
+            $user->password = $data['new_password'];
+            $user->save();
+
+            DB::commit();
+            return ['message' => 'Senha alterada com sucesso!'];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
 }

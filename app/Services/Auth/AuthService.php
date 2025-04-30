@@ -26,7 +26,8 @@ class AuthService
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        if (!Hash::check($request['password'], $user->password)) {
+        // Método alternativo de verificação
+        if (!password_verify($request['password'], $user->password)) {
             return response()->json(['message' => 'Invalid password'], 401);
         }
 
@@ -72,16 +73,20 @@ class AuthService
             $data['type_user_id'] = 1;
             $data['user_name'] = $data['name'];
 
-            $hashedPassword = Hash::make($data['password']);
+            // Antes de salvar o usuário
+            \Log::debug('Senha antes de hash: ' . $data['password']);
 
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
+                'password' => Hash::make($data['password']), // Certifique-se que está usando Hash::make
                 'phone' => $data['phone'],
-                'password' => $hashedPassword,
                 'type_user_id' => $data['type_user_id'],
                 'user_name' => $data['user_name'],
             ]);
+
+            // Após salvar
+            \Log::debug('Senha hasheada: ' . $user->password);
 
             DB::commit();
 

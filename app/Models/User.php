@@ -16,6 +16,7 @@ class User extends Model
         'user_name',
         'email',
         'photo',
+        'is_active',
         'password',
         'type_user_id',
         'address_id',

@@ -4,11 +4,14 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserSimpleResource;
+use App\Models\Address;
 use App\Services\User\UserService;
 use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\User\ChangePasswordRequest;
 
 class UserController extends Controller
 {
@@ -80,9 +83,27 @@ class UserController extends Controller
     {
         $user = auth()->user();
 
-        $user->update($request->only(['name', 'email', 'phone', 'address']));
+        // Verifica e trata os dados do endereço
+        $addressData = $request->only([
+            'city_id',
+            'complement',
+            'district_name',
+            'number',
+            'street',
+            'zip_code'
+        ]);
 
-
+        // Só atualiza/cria endereço se houver dados válidos
+        if (!empty(array_filter($addressData))) {
+            if ($user->address) {
+                // Atualiza o endereço existente
+                $user->address->update($addressData);
+            } else {
+                // Cria um novo endereço
+                $address = Address::create($addressData);
+                $user->address_id = $address->id;
+            }
+        }
 
         if ($request->hasFile('photo')) {
             // Remove a foto antiga, se existir
@@ -95,13 +116,74 @@ class UserController extends Controller
             $user->photo = $path;
         }
 
-        // Atualiza os outros campos
-        $user->fill($request->only(['name', 'email', 'phone', 'reason', 'address']));
+        // Atualiza os dados do usuário
+        $user->fill($request->only(['name', 'email', 'phone', 'reason']));
         $user->save();
 
         return response()->json([
             'message' => 'Dados atualizados com sucesso!',
             'photo_url' => $user->photo ? asset('storage/' . $user->photo) : null,
+            'user' => new UserResource($user->load(['address.city'])), // Carrega o endereço e cidade
         ]);
+    }
+
+    public function delete()
+    {
+        $user = auth()->user();
+
+        if ($user->photo) {
+            // Remove a foto do storage
+            Storage::disk('public')->delete($user->photo);
+
+            // Remove a referência da foto no banco de dados
+            $user->photo = null;
+            $user->save();
+
+            return response()->json([
+                'message' => 'Foto removida com sucesso!',
+            ]);
+        }
+
+        return response()->json([
+            'message' => 'Nenhuma foto encontrada para remover.',
+        ]);
+    }
+
+    public function active($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não encontrado'], 404);
+        }
+
+        $user->is_active = 1;
+        $user->save();
+
+        return response()->json(['message' => 'Status do usuário atualizado com sucesso']);
+    }
+
+    public function inactive($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            return response()->json(['message' => 'Usuário não encontrado'], 404);
+        }
+
+        $user->is_active = 0;
+        $user->save();
+
+        return response()->json(['message' => 'Status do usuário atualizado com sucesso']);
+    }
+
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        try {
+            $result = $this->userService->changePassword($request->validated());
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 401);
+        }
     }
 }

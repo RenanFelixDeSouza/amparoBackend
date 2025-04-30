@@ -17,6 +17,9 @@ class UserSimpleResource extends JsonResource
         return [
             'id' => $this->id,
             'user_name' => $this->name,
+            'photo_url' => $this->photo ? asset('storage/' . $this->photo) : "",
+            'is_active' => $this->is_active,
+            'type' => $this->typeUser,
         ];
     }
 }

@@ -75,5 +75,8 @@ class PetService
         }
     }
 
-    
+    public function updatePet($id, $data)
+    {
+        return $this->petRepository->update($id, $data);
+    }
 }
