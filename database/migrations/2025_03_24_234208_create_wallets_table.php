@@ -9,7 +9,13 @@ class CreateWalletsTable extends Migration
     {
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
-            $table->decimal('total_value', 15, 2); 
+            $table->string('bank_name');
+            $table->string('agency');
+            $table->string('account_number');
+            $table->enum('account_type', ['corrente', 'poupanca', 'investimento']);
+            $table->decimal('total_value', 15, 2)->default(0);
+            $table->text('description')->nullable();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

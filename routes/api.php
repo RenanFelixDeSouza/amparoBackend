@@ -7,6 +7,9 @@ use App\Http\Controllers\Pet\RaceController;
 use App\Http\Controllers\Pet\SpecieController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Wallet\WalletController;
+use App\Http\Controllers\Wallet\WalletMovementController;
+use App\Http\Controllers\ChartOfAccount\ChartOfAccountController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
@@ -29,9 +32,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/user/{id}/active', [UserController::class, 'active']);
     Route::post('/user/change-password', [UserController::class, 'changePassword']);
 
-    
-
-
     //cities
     Route::get('/city', [CityController::class, 'getCities']);
 
@@ -39,7 +39,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/pets/index', [PetController::class, 'index']);
     Route::middleware('check.address')->group(function () {
         Route::post('pets/create', [PetController::class, 'store']);
-        Route::put('pet/{id}', [PetController::class, 'update']); 
+        Route::put('pet/{id}', [PetController::class, 'update']);
         Route::post('pets/{petId}/upload-photo', [PetController::class, 'uploadPhoto']);
         Route::delete('pets/{petId}/delete-photo', [PetController::class, 'deletePhoto']);
         Route::post('pets/{petId}/adopt', [PetController::class, 'adopt']);
@@ -48,16 +48,33 @@ Route::middleware('auth:sanctum')->group(function () {
     });
     Route::get('/races/index', [RaceController::class, 'index']);
     Route::get('/species/index', [SpecieController::class, 'index']);
-    
+
     Route::get('/species/index', [SpecieController::class, 'index']);
-    
+
     // Companies
     Route::get('/companies/index', [CompanyController::class, 'index']);
     Route::middleware('check.address')->group(function () {
         Route::get('/companies/{cnpj}', [CompanyController::class, 'getCompanyByCnpj']);
         Route::post('/companies/create', [CompanyController::class, 'store']);
     });
-    
+
+    // Wallet routes
+    Route::get('/wallets/index', [WalletController::class, 'listAll']);
+    Route::prefix('wallet')->group(function () {
+        Route::post('/create', [WalletController::class, 'create']);
+        Route::put('/update/{id}', [WalletController::class, 'update']);
+        Route::get('/{walletId}/balance', [WalletController::class, 'getBalance']);
+        Route::get('/movements/index', [WalletMovementController::class, 'listAll']); 
+        Route::post('/movements', [WalletMovementController::class, 'create']);
+        Route::get('/{walletId}/movements', [WalletMovementController::class, 'getMovements']);
+    });
+
+    // Chart of Accounts routes
+    Route::prefix('chart-accounts')->group(function () {
+        Route::get('/index', [ChartOfAccountController::class, 'index']);
+        Route::post('/create', [ChartOfAccountController::class, 'create']);
+        Route::put('/{id}', [ChartOfAccountController::class, 'update']);
+    });
 
     Route::post('/logout', [AuthController::class, 'logout']);
 });

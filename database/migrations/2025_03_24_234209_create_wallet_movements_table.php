@@ -3,11 +3,11 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateWalletMovimmentsTable extends Migration
+class CreateWalletmovementsTable extends Migration
 {
     public function up()
     {
-        Schema::create('wallet_movimments', function (Blueprint $table) {
+        Schema::create('wallet_movements', function (Blueprint $table) {
             $table->id();
             $table->decimal('value', 15, 2); 
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); 
@@ -18,6 +18,6 @@ class CreateWalletMovimmentsTable extends Migration
 
     public function down()
     {
-        Schema::dropIfExists('wallet_movimments');
+        Schema::dropIfExists('wallet_movements');
     }
 }
