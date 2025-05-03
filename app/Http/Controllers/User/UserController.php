@@ -4,12 +4,11 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\UserResource;
 use App\Http\Resources\User\UserSimpleResource;
-use App\Models\Address;
+use App\Models\Address\Address;
 use App\Services\User\UserService;
-use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\User\ChangePasswordRequest;
 

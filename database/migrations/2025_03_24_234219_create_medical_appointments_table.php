@@ -10,7 +10,7 @@ class CreateMedicalAppointmentsTable extends Migration
         Schema::create('medical_appointments', function (Blueprint $table) {
             $table->id();
             $table->string('date', 45);
-            $table->string('value', 45);
+            $table->decimal('value', 10, 2); 
             $table->string('description', 45);
             $table->foreignId('user_idtable1')->constrained('users')->onDelete('cascade');
             $table->foreignId('address_id')->constrained('addresses')->onDelete('cascade');

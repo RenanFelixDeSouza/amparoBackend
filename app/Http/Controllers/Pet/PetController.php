@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Pet;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Pet\StorePetRequest;
-use App\Http\Requests\Pet\UpdatePetRequest;
+
+use App\Http\Requests\Pet\Pet\StorePetRequest;
+use App\Http\Requests\Pet\Pet\UpdatePetRequest;
 use App\Http\Resources\Pet\PetResource;
 use App\Services\Pet\PetService;
-use DB;
 use Illuminate\Http\Request;
 
 class PetController extends Controller

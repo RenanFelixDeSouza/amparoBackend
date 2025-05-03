@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\ChartOfAccount;
-use App\Models\User;
+use App\Models\Financial\ChartOfAccount;
+use App\Models\User\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class ChartOfAccountFactory extends Factory

@@ -2,7 +2,7 @@
 
 namespace App\Services\Auth;
 
-use App\Models\User;
+use App\Models\User\User;
 use DB;
 use Hash;
 use Illuminate\Support\Facades\Auth;

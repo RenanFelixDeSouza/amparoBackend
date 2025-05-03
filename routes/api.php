@@ -1,15 +1,15 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\CIty\CityController;
+use App\Http\Controllers\Address\CityController;
 use App\Http\Controllers\Pet\PetController;
 use App\Http\Controllers\Pet\RaceController;
 use App\Http\Controllers\Pet\SpecieController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Company\CompanyController;
-use App\Http\Controllers\Wallet\WalletController;
-use App\Http\Controllers\Wallet\WalletMovementController;
-use App\Http\Controllers\ChartOfAccount\ChartOfAccountController;
+use App\Http\Controllers\Financial\WalletController;
+use App\Http\Controllers\Financial\WalletMovementController;
+use App\Http\Controllers\Financial\ChartOfAccountController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
@@ -65,13 +65,16 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/update/{id}', [WalletController::class, 'update']);
         Route::get('/{walletId}/balance', [WalletController::class, 'getBalance']);
         Route::get('/movements/index', [WalletMovementController::class, 'listAll']); 
-        Route::post('/movements', [WalletMovementController::class, 'create']);
+        Route::post('/movement', [WalletMovementController::class, 'create']);
         Route::get('/{walletId}/movements', [WalletMovementController::class, 'getMovements']);
     });
 
     // Chart of Accounts routes
     Route::prefix('chart-accounts')->group(function () {
         Route::get('/index', [ChartOfAccountController::class, 'index']);
+        Route::get('/children/{id}', [ChartOfAccountController::class, 'getChildren']);
+        Route::get('/{id}/parents', [ChartOfAccountController::class, 'getParents']);
+        Route::get('/{id}', [ChartOfAccountController::class, 'show']);
         Route::post('/create', [ChartOfAccountController::class, 'create']);
         Route::put('/{id}', [ChartOfAccountController::class, 'update']);
     });

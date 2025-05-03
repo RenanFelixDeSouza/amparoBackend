@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Financial\ChartOfAccount;
 use Illuminate\Database\Seeder;
-use App\Models\ChartOfAccount;
 use Illuminate\Support\Facades\DB;
 
 class ChartOfAccountSeeder extends Seeder

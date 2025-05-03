@@ -2,7 +2,7 @@
 
 namespace App\Services\User;
 
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Hash;
 use DB;
@@ -129,7 +129,7 @@ class UserService
                 throw new \Exception('A senha atual está incorreta');
             }
 
-            $user->password = $data['new_password'];
+            $user->password =    Hash::make($data['new_password']);
             $user->save();
 
             DB::commit();

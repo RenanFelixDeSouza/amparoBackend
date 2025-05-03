@@ -3,12 +3,11 @@
 namespace App\Http\Controllers\Company;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Company\Company;
-use Illuminate\Support\Facades\Http;
+use App\Services\Company\CompanyService;
+use App\Http\Resources\Company\CompanyResource;
 use App\Http\Requests\Company\StoreCompanyRequest;
-use App\Services\CompanyService;
-use App\Http\Resources\CompanyResource;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
 class CompanyController extends Controller
 {
