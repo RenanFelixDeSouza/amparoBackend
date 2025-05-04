@@ -4,12 +4,12 @@ namespace App\Http\Requests\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-/**
- * Validação de requisições de autenticação
- * @package App\Http\Requests\Auth
- */
 class AuthRequest extends FormRequest
 {
+    /**
+     * Determina se o usuário está autorizado a fazer esta requisição
+     * @return bool
+     */
     public function authorize()
     {
         return true;
@@ -27,6 +27,10 @@ class AuthRequest extends FormRequest
         ];
     }
 
+    /**
+     * Mensagens de erro personalizadas
+     * @return array<string, string>
+     */
     public function messages()
     {
         return [

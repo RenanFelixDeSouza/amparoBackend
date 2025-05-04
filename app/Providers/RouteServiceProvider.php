@@ -8,6 +8,6 @@ class RouteServiceProvider extends ServiceProvider
 {
     public function boot(): void
     {
-        // ...existing code...
+        $this->app['router']->aliasMiddleware('check.address', \App\Http\Middleware\CheckUserAddress::class);
     }
 }
