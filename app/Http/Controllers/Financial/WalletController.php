@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Financial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Financial\Wallet\StoreWalletRequest;
 use App\Http\Requests\Financial\Wallet\UpdateWalletRequest;
+use App\Http\Resources\Financial\WalletSimplifiedResource;
 use App\Services\Financial\WalletService;
 
 use Illuminate\Http\Request;
@@ -71,12 +72,24 @@ class WalletController extends Controller
         }
     }
 
+    public function listAllSimplified()
+    {
+        try {
+            $wallets = $this->walletService->getAllWalletsSimplified();
+            return WalletSimplifiedResource::collection($wallets);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erro ao buscar carteiras simplificadas',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
     public function update(UpdateWalletRequest $request, $id)
     {
         try {
             $data = $request->validated();
             $result = $this->walletService->updateWallet($id, $data);
-            
+
             return response()->json([
                 'message' => 'Carteira atualizada com sucesso',
                 'wallet' => $result

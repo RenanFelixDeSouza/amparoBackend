@@ -10,6 +10,7 @@ use App\Http\Controllers\Company\CompanyController;
 use App\Http\Controllers\Financial\WalletController;
 use App\Http\Controllers\Financial\WalletMovementController;
 use App\Http\Controllers\Financial\ChartOfAccountController;
+use App\Http\Controllers\Config\ConfigurationController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
@@ -60,11 +61,12 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Wallet routes
     Route::get('/wallets/index', [WalletController::class, 'listAll']);
+    Route::get('/wallets/index/simplified', [WalletController::class, 'listAllSimplified']);
     Route::prefix('wallet')->group(function () {
         Route::post('/create', [WalletController::class, 'create']);
         Route::put('/update/{id}', [WalletController::class, 'update']);
         Route::get('/{walletId}/balance', [WalletController::class, 'getBalance']);
-        Route::get('/movements/index', [WalletMovementController::class, 'listAll']); 
+        Route::get('/movements/index', [WalletMovementController::class, 'listAll']);
         Route::post('/movement', [WalletMovementController::class, 'create']);
         Route::get('/{walletId}/movements', [WalletMovementController::class, 'getMovements']);
     });
@@ -79,5 +81,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/{id}', [ChartOfAccountController::class, 'update']);
     });
 
+    Route::prefix('configurations')->group(function () {
+        Route::get('/index', [ConfigurationController::class, 'listAll']);
+        Route::post('/save', [ConfigurationController::class, 'save']);
+    });
     Route::post('/logout', [AuthController::class, 'logout']);
 });

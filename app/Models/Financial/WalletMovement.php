@@ -12,6 +12,10 @@ class WalletMovement extends Model
 
     protected $fillable = [
         'wallet_id',
+        'movement_type',
+        'description',
+        'status',
+        'date',
         'type',
         'value',
         'user_id',
@@ -20,7 +24,8 @@ class WalletMovement extends Model
     ];
 
     protected $casts = [
-        'value' => 'decimal:2'
+        'value' => 'decimal:2',
+        'date' => 'datetime'
     ];
 
     public function wallet()
@@ -31,11 +36,6 @@ class WalletMovement extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function cashFlow()
-    {
-        return $this->hasOne(CashFlow::class);
     }
 
     public function monthlySubscription()

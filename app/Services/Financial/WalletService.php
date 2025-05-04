@@ -4,7 +4,6 @@ namespace App\Services\Financial;
 
 use App\Repositories\Financial\WalletRepository;
 use App\Models\Financial\Wallet;
-use App\Models\Financial\CashFlow;
 use App\Models\Financial\WalletMovement;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Eloquent\Builder;
@@ -30,25 +29,16 @@ class WalletService
             // Se houver saldo inicial, criar movimentação
             if (isset($data['balance']) && $data['balance'] > 0) {
                 // Criar movimento na carteira
-                $movement = WalletMovement::create([
+                WalletMovement::create([
                     'wallet_id' => $wallet->id,
                     'type' => 'entrada',
                     'value' => $data['balance'],
                     'description' => 'Saldo inicial da carteira',
                     'user_id' => auth()->user()->id,
-                    'comments' => 'Movimentação gerada automaticamente na criação da carteira'
-                ]);
-
-                // Criar registro no fluxo de caixa
-                CashFlow::create([
-                    'flow_type' => 'inflow',
-                    'description' => 'Saldo inicial da carteira: ' . $wallet->bank_name,
-                    'value' => $data['balance'],
-                    'date' => now(),
                     'status' => 'confirmed',
-                    'comments' => 'Movimentação de entrada avulsa referente à criação da carteira ' . $wallet->bank_name,
-                    'user_id' => auth()->user()->id,
-                    'wallet_movement_id' => $movement->id
+                    'movement_type' => 'inflow',
+                    'date' => now(),
+                    'comments' => 'Movimentação de entrada avulsa referente à criação da carteira ' . $wallet->bank_name
                 ]);
             }
 
@@ -127,6 +117,14 @@ class WalletService
                     'total_balance' => $wallets->sum('total_value')
                 ]
             ];
+        } catch (\Exception $e) {
+            throw new \Exception('Erro ao buscar carteiras: ' . $e->getMessage());
+        }
+    }
+    public function getAllWalletsSimplified()
+    {
+        try {
+            return  Wallet::get();
         } catch (\Exception $e) {
             throw new \Exception('Erro ao buscar carteiras: ' . $e->getMessage());
         }

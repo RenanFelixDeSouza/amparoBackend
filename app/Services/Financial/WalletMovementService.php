@@ -25,7 +25,6 @@ class WalletMovementService
             }
             
             $data['user_id'] = auth()->user()->id;
-            $data['chart_of_account_id'] = $data['chart_account_id'] ?? null;
             $movement = $this->movementRepository->create($data);
 
             $newBalance = $wallet->total_value + ($data['type'] === 'entrada' ? $data['value'] : -$data['value']);

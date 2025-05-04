@@ -29,7 +29,7 @@ class StoreWalletMovementRequest extends FormRequest
             'value' => 'required|numeric|min:0.01',
             'description' => 'nullable|string|max:255',
             'comments' => 'nullable|string|max:255',
-            'chart_account_id' => 'nullable|exists:chart_of_accounts,id'
+            'chart_of_account_id' => 'nullable|exists:chart_of_accounts,id'
         ];
     }
 
@@ -51,7 +51,7 @@ class StoreWalletMovementRequest extends FormRequest
             'description.string' => 'A descrição deve ser um texto',
             'comments.string' => 'O comentário deve ser um texto',
             'comments.max' => 'O comentário não pode ter mais que 255 caracteres',
-            'chart_account_id.exists' => 'O plano de contas selecionado não existe'
+            'chart_of_account_id.exists' => 'O plano de contas selecionado não existe'
         ];
     }
 }

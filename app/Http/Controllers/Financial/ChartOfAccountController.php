@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Financial;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Financial\ChartOfAccount\StoreChartOfAccountRequest;
 use App\Http\Requests\Financial\ChartOfAccount\UpdateChartOfAccountRequest;
+use App\Http\Resources\Financial\ChartOfAccountSimplifiedResource;
 use App\Services\Financial\ChartOfAccountService;
 use Illuminate\Http\Request;
 use App\Http\Resources\Financial\ChartOfAccountResource;
@@ -37,10 +38,14 @@ class ChartOfAccountController extends Controller
 
             $result = $this->chartOfAccountService->getAllAccounts($filters, $pagination);
 
-            return response()->json([
-                'data' => ChartOfAccountResource::collection($result['accounts']),
-                'meta' => $result['summary']
-            ]);
+            return $request->input('table') === 'true' ?
+                response()->json([
+                    'data' => ChartOfAccountResource::collection($result['accounts']),
+                    'meta' => $result['summary'],
+                ]) : response()->json([
+                            'data' => ChartOfAccountSimplifiedResource::collection($result['accounts'])
+                        ]);
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Erro ao buscar plano de contas',
@@ -66,7 +71,7 @@ class ChartOfAccountController extends Controller
     {
         try {
             $result = $this->chartOfAccountService->createAccount($request->validated());
-            
+
             return response()->json([
                 'message' => 'Plano de contas criado com sucesso',
                 'data' => new ChartOfAccountResource($result['account'])
