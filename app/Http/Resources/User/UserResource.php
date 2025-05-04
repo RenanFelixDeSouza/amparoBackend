@@ -21,8 +21,8 @@ class UserResource extends JsonResource
                 'complement' => $this->address->complement,
                 'district_name' => $this->address->district_name,
                 'city_id' => $this->address->city_id,
-                'city_name' => $this->address->city->name,
-                'city_federative_unit' => $this->address->city->federative_unit,
+                'city_name' => $this->address->city ? $this->address->city->name : null,
+                'city_federative_unit' => $this->address->city ? $this->address->city->federative_unit : null,
             ] : null,
         ];
     }

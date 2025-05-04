@@ -9,9 +9,14 @@ class CitiesTableSeeder extends Seeder
 {
     public function run()
     {
+        // Desativa as verificações de chave estrangeira
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        
+        // Limpa a tabela
         if (DB::table('cities')->exists()) {
             DB::table('cities')->delete(); 
         }
+
 
         $cities = [
                 ["name" => "Arcoverde", "code" => "2601201", "federative_unit" => "PE"],
@@ -5582,7 +5587,10 @@ class CitiesTableSeeder extends Seeder
                 ["name" => "Tupiratins", "code" => "1721307", "federative_unit" => "TO"],
                 ["name" => "EXTERIOR", "code" => "9999999", "federative_unit" => "EX" ]
         ];
-
+                
         DB::table('cities')->insert($cities);
+
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
     }
 }

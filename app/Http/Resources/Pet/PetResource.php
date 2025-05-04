@@ -20,9 +20,15 @@ class PetResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'specie' => $this->specie->description ?? null,
+            'specie' => $this->specie ? [
+                'id' => $this->specie->id,
+                'description' => $this->specie->description,
+            ] : null,
             'photo_url' => $this->photo ? asset('storage/' . $this->photo) : null,
-            'race' => $this->race->description ?? null,
+            'race' => $this->race ? [
+                'id' => $this->race->id,
+                'description' => $this->race->description,
+            ] : null,
             'birth_date' => $this->birth_date,
             'is_castrated' => $this->is_castrated,
             'adoptions' => $this->petRepository->hasAdoption($this->id),

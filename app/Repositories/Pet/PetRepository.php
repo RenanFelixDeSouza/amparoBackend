@@ -18,8 +18,8 @@ class PetRepository
         ];
 
         // Valida a coluna de ordenação
-        $sortColumn = in_array($pagination['sort_column'], $allowedSortColumns) 
-            ? $pagination['sort_column'] 
+        $sortColumn = in_array($pagination['sort_column'], $allowedSortColumns)
+            ? $pagination['sort_column']
             : 'pets.name';
 
         return Pet::query()
@@ -36,8 +36,8 @@ class PetRepository
             })
             ->orderBy($sortColumn, $pagination['sort_order'])
             ->paginate($pagination['limit'], [
-                'pets.*', 
-                'races.description as race_description', 
+                'pets.*',
+                'races.description as race_description',
                 'species.description as specie_description'
             ], 'page', $pagination['page']);
     }
@@ -46,8 +46,8 @@ class PetRepository
     {
         DB::beginTransaction();
         try {
-   
-            if($data['birth_date'] === "") {
+
+            if ($data['birth_date'] === "") {
                 $data['birth_date'] = null;
             }
 
@@ -57,6 +57,38 @@ class PetRepository
                 'user_id' => $data['user_id'],
                 'action' => 'created',
             ]);
+            DB::commit();
+            return $pet;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function update($id, array $data)
+    {
+        DB::beginTransaction();
+        try {
+            $pet = Pet::findOrFail($id);
+
+            if ($data['birth_date'] === "") {
+                $data['birth_date'] = null;
+            }
+
+            $pet->update($data);
+
+            // Garante que temos um ID de usuário válido
+            $userId = auth()->user()->id;
+            if (!$userId) {
+                throw new \Exception('Usuário não autenticado');
+            }
+
+            DB::table('pivot_pet_users')->insert([
+                'pet_id' => $pet->id,
+                'user_id' => $userId,
+                'action' => 'updated',
+            ]);
+
             DB::commit();
             return $pet;
         } catch (\Exception $e) {

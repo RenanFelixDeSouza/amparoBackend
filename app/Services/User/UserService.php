@@ -2,19 +2,45 @@
 
 namespace App\Services\User;
 
-use App\Models\User;
+use App\Models\User\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use DB;
 
 class UserService
 {
-    public function getUser(){
+    public function getUser()
+    {
         $user = auth()->user();
         $user->load('typeUser', 'address.city');
 
         return [
             'user' => $user,
         ];
+    }
+
+
+    public function getAllUsers(array $filters, array $pagination)
+    {
+        $query = User::with('typeUser');
+
+        if (!empty($filters['name'])) {
+            $query->where('name', 'like', '%' . $filters['name'] . '%');
+        }
+
+        if (!empty($filters['email'])) {
+            $query->where('email', 'like', '%' . $filters['email'] . '%');
+        }
+
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%')
+                    ->orWhere('email', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        return $query->orderBy($pagination['sort_column'], $pagination['sort_order'])
+            ->paginate($pagination['limit'], ['*'], 'page', $pagination['page']);
     }
     public function uploadPhoto($request)
     {
@@ -87,6 +113,27 @@ class UserService
             DB::commit();
 
             return ['message' => 'foto do usuario deletado com sucesso!'];
+        } catch (\Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    public function changePassword($data)
+    {
+        $user = auth()->user();
+
+        DB::beginTransaction();
+        try {
+            if (!Hash::check($data['admin_password'], $user->password)) {
+                throw new \Exception('A senha atual está incorreta');
+            }
+
+            $user->password =    Hash::make($data['new_password']);
+            $user->save();
+
+            DB::commit();
+            return ['message' => 'Senha alterada com sucesso!'];
         } catch (\Exception $e) {
             DB::rollBack();
             throw $e;

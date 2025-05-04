@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Pet;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Pet\StoreRaceRequest;
+use App\Http\Requests\Pet\Race\StoreRaceRequest;
 use App\Http\Resources\Pet\RaceResource;
 use App\Services\Pet\RaceService;
 use Illuminate\Http\Request;

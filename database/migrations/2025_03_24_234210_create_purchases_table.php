@@ -10,10 +10,10 @@ class CreatePurchasesTable extends Migration
         Schema::create('purchases', function (Blueprint $table) {
             $table->id();
             $table->string('amount', 45);
-            $table->string('value', 45);
+            $table->decimal('value', 10, 2);
             $table->foreignId('product_pack_id')->nullable()->constrained('product_packs')->onDelete('cascade');
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('wallet_movimment_id')->nullable()->constrained('wallet_movimments')->onDelete('cascade');
+            $table->foreignId('wallet_movimment_id')->nullable()->constrained('wallet_movements')->onDelete('cascade');
             $table->timestamps();
         });
     }

@@ -62,7 +62,7 @@ class AuthController extends Controller
     public function logout()
     {
         try {
-            $this->authService->logout(Auth::user());
+            $this->authService->logout(Auth::id());
             return response()->json(['message' => 'Logged out successfully'], 200);
         } catch (\Exception $e) {
             return response()->json(['message' => $e->getMessage()], 401);
