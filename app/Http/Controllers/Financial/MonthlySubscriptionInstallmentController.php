@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Financial\MonthlySubscriptionInstallmentResource;
 use App\Services\Financial\MonthlySubscriptionInstallmentService;
 use Illuminate\Http\Request;
 
@@ -17,19 +18,16 @@ class MonthlySubscriptionInstallmentController extends Controller
 
     public function index(Request $request)
     {
-        try {
-            $installments = $this->installmentService->getAllInstallments($request);
-            return response()->json($installments);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+        $installments = $this->installmentService->getAllInstallments($request);
+        return MonthlySubscriptionInstallmentResource::collection($installments);
     }
 
-    public function pay($id)
+    public function pay($id, Request $request)
     {
         try {
-            $installment = $this->installmentService->payInstallment($id);
-            return response()->json($installment);
+            $data = $request->only(['payment_date', 'observation', 'wallet_id', 'account_name']);
+            $installment = $this->installmentService->payInstallment($id, $data);
+            return new MonthlySubscriptionInstallmentResource($installment);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

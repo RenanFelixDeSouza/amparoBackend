@@ -75,7 +75,7 @@ class ChartOfAccountsSeeder extends Seeder
         $path = $this->generatePath($parentId, $code);
         
         return ChartOfAccount::create([
-            'user_id' => 2, 
+            'user_id' => 1, 
             'parent_id' => $parentId,
             'name' => $name,
             'type' => $type,

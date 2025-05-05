@@ -11,8 +11,8 @@ class MonthlySubscriptionInstallmentService
 {
     public function getAllInstallments($request)
     {
-        $query = MonthlySubscriptionInstallment::with(['monthlySubscription', 'walletMovement']);
-        
+        $query = MonthlySubscriptionInstallment::with(['monthlySubscription.subscriptionPlan', 'walletMovement']);
+
         if ($request->has('status')) {
             $query->where('status', $request->status);
         }
@@ -25,36 +25,44 @@ class MonthlySubscriptionInstallmentService
             $query->whereDate('due_date', '<=', $request->date_end);
         }
 
-        return $query->orderBy('due_date', 'asc')->get();
+        $sortColumn = $request->input('sort_column', 'due_date');
+        $sortOrder = $request->input('sort_order', 'asc');
+        $page = $request->input('page', 1);
+        $limit = $request->input('per_page', 5);
+
+        return $query->orderBy($sortColumn, $sortOrder)
+            ->paginate($limit, ['*'], 'page', $page);
     }
 
-    public function payInstallment($id)
+    public function payInstallment($id, array $data)
     {
         try {
             DB::beginTransaction();
 
             $installment = MonthlySubscriptionInstallment::findOrFail($id);
-            
+
             if ($installment->status === 'paid') {
                 throw new Exception('Esta parcela já está paga');
             }
 
-            // Criar movimento na carteira
             $walletMovement = WalletMovement::create([
-                'wallet_id' => 1, // Definir carteira padrão ou passar por parâmetro
-                'movement_type' => 'credit',
+                'wallet_id' => $data['wallet_id'],
+                'movement_type' => 'inflow',
                 'description' => 'Pagamento de mensalidade #' . $installment->installment_number,
                 'status' => 'confirmed',
-                'date' => now(),
-                'type' => 'monthly_subscription',
+                'date' => $data['payment_date'] ?? now(),
+                'type' => 'entrada',
                 'value' => $installment->value,
-                'user_id' => auth()->id()
+                'chart_of_account_id' => $installment->monthlySubscription->subscriptionPlan->chart_of_account_id,
+                'user_id' => auth()->user()->id,
+                'observation' => $data['observation'] ?? null,
+                'account_name' => $data['account_name'] ?? null
             ]);
 
-            // Atualizar parcela
             $installment->update([
                 'status' => 'paid',
-                'wallet_movement_id' => $walletMovement->id
+                'wallet_movement_id' => $walletMovement->id,
+                'payment_date' => $data['payment_date'] ?? now()
             ]);
 
             DB::commit();

@@ -23,6 +23,7 @@ return new class extends Migration
                 ->name('fk_wallet_movement');
             $table->decimal('value', 10, 2);
             $table->date('due_date');
+            $table->date('payment_date')->nullable();
             $table->enum('status', ['pending', 'paid', 'overdue'])->default('pending');
             $table->timestamps();
         });

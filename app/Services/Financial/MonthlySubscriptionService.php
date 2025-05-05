@@ -57,15 +57,18 @@ class MonthlySubscriptionService
             
             $subscription = MonthlySubscription::with('subscriptionPlan')->findOrFail($subscriptionId);
             $plan = $subscription->subscriptionPlan;
+            $currentDate = date('Y-m-d');
             
             for ($i = 1; $i <= $plan->duration_months; $i++) {
+                $dueDate = date('Y-m-d', strtotime($subscription->start_date . " +{$i} months"));
+                
                 MonthlySubscriptionInstallment::create([
                     'monthly_subscription_id' => $subscription->id,
                     'installment_number' => $i,
                     'total_installments' => $plan->duration_months,
                     'value' => $plan->value,
-                    'due_date' => date('Y-m-d', strtotime($subscription->start_date . " +{$i} months")),
-                    'status' => 'pending'
+                    'due_date' => $dueDate,
+                    'status' => $currentDate > $dueDate ? 'overdue' : 'pending'
                 ]);
             }
 
