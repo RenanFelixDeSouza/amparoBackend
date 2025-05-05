@@ -1,3 +1,4 @@
+<?php
 namespace App\Http\Controllers\Financial;
 
 use App\Http\Controllers\Controller;
@@ -19,13 +20,6 @@ class SubscriptionPlanController extends Controller
         $subscriptionPlans = $this->subscriptionPlanService->getAll($request->all());
         return SubscriptionPlanResource::collection($subscriptionPlans);
     }
-
-    public function show($id)
-    {
-        $subscriptionPlan = $this->subscriptionPlanService->getById($id);
-        return new SubscriptionPlanResource($subscriptionPlan);
-    }
-
     public function store(Request $request)
     {
         $subscriptionPlan = $this->subscriptionPlanService->create($request->all());
@@ -38,9 +32,5 @@ class SubscriptionPlanController extends Controller
         return new SubscriptionPlanResource($subscriptionPlan);
     }
 
-    public function destroy($id)
-    {
-        $this->subscriptionPlanService->delete($id);
-        return response()->json(null, 204);
-    }
+
 }

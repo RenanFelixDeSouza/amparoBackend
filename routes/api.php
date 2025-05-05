@@ -11,6 +11,9 @@ use App\Http\Controllers\Financial\WalletController;
 use App\Http\Controllers\Financial\WalletMovementController;
 use App\Http\Controllers\Financial\ChartOfAccountController;
 use App\Http\Controllers\Config\ConfigurationController;
+use App\Http\Controllers\Financial\SubscriptionPlanController;
+use App\Http\Controllers\Financial\MonthlySubscriptionController;
+use App\Http\Controllers\Financial\MonthlySubscriptionInstallmentController;
 use Illuminate\Support\Facades\Route;
 
 // Rotas públicas
@@ -85,5 +88,27 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/index', [ConfigurationController::class, 'listAll']);
         Route::post('/save', [ConfigurationController::class, 'save']);
     });
+
+    // Subscription Plans routes
+    Route::prefix('subscription-plans')->group(function () {
+        Route::get('/', [SubscriptionPlanController::class, 'index']);
+        Route::post('/', [SubscriptionPlanController::class, 'store']);
+        Route::put('/{id}', [SubscriptionPlanController::class, 'update']);
+    });
+
+    // Monthly Subscriptions routes
+    Route::prefix('monthly-subscriptions')->group(function () {
+        Route::get('/', [MonthlySubscriptionController::class, 'index']);
+        Route::post('/', [MonthlySubscriptionController::class, 'store']);
+        Route::put('/{id}', [MonthlySubscriptionController::class, 'update']);
+        Route::post('/{id}/generate-installments', [MonthlySubscriptionController::class, 'generateInstallments']);
+    });
+
+    // Monthly Subscription Installments
+    Route::prefix('financial')->group(function () {
+        Route::get('/installments', [MonthlySubscriptionInstallmentController::class, 'index']);
+        Route::post('/installments/{id}/pay', [MonthlySubscriptionInstallmentController::class, 'pay']);
+    });
+
     Route::post('/logout', [AuthController::class, 'logout']);
 });

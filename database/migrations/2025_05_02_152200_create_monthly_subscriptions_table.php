@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('monthly_subscriptions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('wallet_movement_id')->constrained()->onDelete('cascade');
             $table->foreignId('subscription_plan_id')->constrained()->onDelete('cascade');
             $table->date('start_date');        
             $table->date('next_due_date');    

@@ -22,12 +22,6 @@ class MonthlySubscriptionController extends Controller
         return MonthlySubscriptionResource::collection($subscriptions);
     }
 
-    public function show($id)
-    {
-        $subscription = $this->monthlySubscriptionService->getSubscriptionById($id);
-        return new MonthlySubscriptionResource($subscription);
-    }
-
     public function store(Request $request)
     {
         $subscription = $this->monthlySubscriptionService->createSubscription($request->all());
@@ -40,9 +34,9 @@ class MonthlySubscriptionController extends Controller
         return new MonthlySubscriptionResource($subscription);
     }
 
-    public function destroy($id)
+    public function generateInstallments($id)
     {
-        $this->monthlySubscriptionService->deleteSubscription($id);
-        return response()->json(['message' => 'Subscription deleted successfully']);
+        $installments = $this->monthlySubscriptionService->generateInstallments($id);
+        return MonthlySubscriptionResource::collection($installments);
     }
 }

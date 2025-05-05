@@ -4,6 +4,7 @@ namespace App\Models\User;
 
 use App\Models\Pet\Pet;
 use App\Models\Address\Address;
+use App\Models\Financial\MonthlySubscription;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Sanctum\HasApiTokens;
@@ -48,5 +49,10 @@ class User extends Model
         return $this->belongsToMany(Pet::class, 'pivot_pet_users')
                     ->withPivot('action')
                     ->withTimestamps();
+    }
+
+    public function monthlySubscriptions()
+    {
+        return $this->hasMany(MonthlySubscription::class);
     }
 }

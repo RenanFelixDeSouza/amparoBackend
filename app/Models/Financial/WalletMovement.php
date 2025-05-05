@@ -38,8 +38,5 @@ class WalletMovement extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function monthlySubscription()
-    {
-        return $this->hasOne(MonthlySubscription::class);
-    }
+
 }

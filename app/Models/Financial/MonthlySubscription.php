@@ -3,6 +3,8 @@
 namespace App\Models\Financial;
 
 use App\Models\User\User;
+use App\Models\Financial\SubscriptionPlan;
+use App\Models\Financial\WalletMovement;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -12,7 +14,6 @@ class MonthlySubscription extends Model
 
     protected $fillable = [
         'user_id',
-        'wallet_movement_id',
         'subscription_plan_id',
         'start_date',
         'next_due_date',
@@ -24,13 +25,23 @@ class MonthlySubscription extends Model
         'next_due_date' => 'date'
     ];
 
-    public function walletMovement()
-    {
-        return $this->belongsTo(WalletMovement::class);
-    }
-
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
+    public function subscriptionPlan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'subscription_plan_id');
+    }
+
+    public function walletMovement()
+    {
+        return $this->belongsTo(WalletMovement::class, 'wallet_movement_id');
+    }
+
+    public function installments()
+    {
+        return $this->hasMany(MonthlySubscriptionInstallment::class);
     }
 }

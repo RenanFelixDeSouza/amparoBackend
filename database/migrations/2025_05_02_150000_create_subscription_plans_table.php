@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');          
             $table->decimal('value', 10, 2);
-            $table->integer('duration_months')->default(1); 
+            $table->integer('duration_months')->default(12); 
             $table->boolean('is_active')->default(true);
             $table->text('description')->nullable();
             $table->timestamps();

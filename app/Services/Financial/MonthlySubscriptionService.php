@@ -3,7 +3,7 @@
 namespace App\Services\Financial;
 
 use App\Models\Financial\MonthlySubscription;
-use App\Models\Financial\WalletMovement;
+use App\Models\Financial\MonthlySubscriptionInstallment;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -11,45 +11,17 @@ class MonthlySubscriptionService
 {
     public function getAllSubscriptions($request)
     {
-        $query = MonthlySubscription::with(['user', 'walletMovement', 'subscriptionPlan']);
-        
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->has('date_start')) {
-            $query->whereDate('start_date', '>=', $request->date_start);
-        }
-
-        if ($request->has('date_end')) {
-            $query->whereDate('start_date', '<=', $request->date_end);
-        }
-
-        return $query->orderBy('created_at', 'desc')->get();
+        $query = MonthlySubscription::query();
+        return $query->orderBy('id', 'desc')->get();
     }
-
-    public function getSubscriptionById($id)
-    {
-        return MonthlySubscription::with(['user', 'walletMovement', 'subscriptionPlan'])->findOrFail($id);
-    }
-
     public function createSubscription($data)
     {
         try {
             DB::beginTransaction();
 
-            $walletMovement = WalletMovement::create([
-                'type' => 'debit',
-                'value' => $data['value'],
-                'wallet_id' => $data['wallet_id'],
-                'user_id' => $data['user_id'],
-                'comments' => $data['comments'] ?? 'Monthly subscription payment'
-            ]);
-
             $subscription = MonthlySubscription::create([
                 'user_id' => $data['user_id'],
-                'wallet_movement_id' => $walletMovement->id,
-                'subscription_plan_id' => $data['subscription_plan_id'],
+                'subscription_plan_id' => $data['plan_id'],
                 'start_date' => $data['start_date'],
                 'next_due_date' => date('Y-m-d', strtotime('+1 month', strtotime($data['start_date']))),
                 'status' => 'active'
@@ -62,7 +34,6 @@ class MonthlySubscriptionService
             throw $e;
         }
     }
-
     public function updateSubscription($id, $data)
     {
         try {
@@ -79,20 +50,27 @@ class MonthlySubscriptionService
         }
     }
 
-    public function deleteSubscription($id)
+    public function generateInstallments($subscriptionId)
     {
         try {
             DB::beginTransaction();
-
-            $subscription = MonthlySubscription::findOrFail($id);
             
-            if ($subscription->walletMovement) {
-                $subscription->walletMovement->delete();
+            $subscription = MonthlySubscription::with('subscriptionPlan')->findOrFail($subscriptionId);
+            $plan = $subscription->subscriptionPlan;
+            
+            for ($i = 1; $i <= $plan->duration_months; $i++) {
+                MonthlySubscriptionInstallment::create([
+                    'monthly_subscription_id' => $subscription->id,
+                    'installment_number' => $i,
+                    'total_installments' => $plan->duration_months,
+                    'value' => $plan->value,
+                    'due_date' => date('Y-m-d', strtotime($subscription->start_date . " +{$i} months")),
+                    'status' => 'pending'
+                ]);
             }
-            
-            $subscription->delete();
 
             DB::commit();
+            return $subscription->fresh()->installments;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;

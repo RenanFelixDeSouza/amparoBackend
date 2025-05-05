@@ -12,7 +12,6 @@ class MonthlySubscriptionResource extends JsonResource
             'id' => $this->id,
             'user' => $this->user,
             'subscription_plan' => $this->subscriptionPlan,
-            'wallet_movement' => $this->walletMovement,
             'start_date' => $this->start_date,
             'next_due_date' => $this->next_due_date,
             'status' => $this->status,
